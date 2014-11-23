@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+import logging
+import socket
+import subprocess
+import time
+
+import Adafruit_CharLCD as LCD
+
+def ip_address():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("gmail.com", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception as e:
+        logging.error("Exception({0}): {1}".format(e.errno, e.strerror))
+        return None
+
+def wifi_ssid():
+    wifi_info = subprocess.check_output(["wpa_cli", "status"])
+    for line in wifi_info.split():
+        if line.startswith("ssid"):
+            ssid=line.split("=")[1]
+            return ssid
+    return None
+
+def main():
+    logging.basicConfig(
+        filename='/var/log/lcd-panel.log',
+        format='%(asctime)s [%(levelname)s] (%(module)s:%(lineno)d) %(message)s',
+        level=logging.INFO
+    )
+
+    lcd = LCD.Adafruit_CharLCDPlate()
+
+    logging.info('Turning on backlight')
+    lcd.set_color(1.0, 0.0, 0.0)
+
+    while wifi_ssid() is None or ip_address() is None:
+        lcd.clear()
+        logging.info("Looking for WiFi, sleeping...")
+        lcd.message("Looking for WiFi...")
+        time.sleep(1)
+
+    lcd.clear()
+
+    ssid = wifi_ssid()
+    ip = ip_address()
+
+    lcd.message(ssid + "\n" + ip)
+    logging.info("%s, %s", ssid, ip)
+
+    # time.sleep(5)
+    # lcd.set_color(0.0, 0.0, 0.0)
+
+if __name__ == '__main__':
+    main()
