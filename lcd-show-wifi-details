@@ -35,6 +35,8 @@ def main():
 
     lcd = LCD.Adafruit_CharLCDPlate()
 
+    lcd.create_char(1, [2, 9, 5, 21, 5, 9, 2, 0]) # Wifi icon!
+
     logging.info('Turning on backlight')
     lcd.set_color(1.0, 0.0, 0.0)
 
@@ -49,7 +51,7 @@ def main():
     ssid = wifi_ssid()
     ip = ip_address()
 
-    lcd.message(ssid + "\n" + ip)
+    lcd.message('\x01 ' + ssid + "\n" + ip)
     logging.info("%s, %s", ssid, ip)
 
     # time.sleep(5)
