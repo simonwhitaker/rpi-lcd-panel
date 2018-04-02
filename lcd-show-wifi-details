@@ -3,6 +3,7 @@
 import logging
 import socket
 import subprocess
+import sys
 import time
 
 import Adafruit_CharLCD as LCD
@@ -32,27 +33,28 @@ def main():
         format='%(asctime)s [%(levelname)s] (%(module)s:%(lineno)d) %(message)s',
         level=logging.INFO
     )
+    if sys.stdout.isatty():
+        logging.getLogger().addHandler(logging.StreamHandler())
 
     lcd = LCD.Adafruit_CharLCDPlate()
 
     lcd.create_char(1, [2, 9, 5, 21, 5, 9, 2, 0]) # Wifi icon!
 
     logging.info('Turning on backlight')
-    lcd.set_color(1.0, 0.0, 0.0)
-
-    while wifi_ssid() is None or ip_address() is None:
-        lcd.clear()
-        logging.info("Looking for WiFi, sleeping...")
-        lcd.message("Looking for WiFi...")
-        time.sleep(1)
-
-    lcd.clear()
+    lcd.set_backlight(1)
+    lcd.message("Looking for Wifi...")
 
     ssid = wifi_ssid()
     ip = ip_address()
+    while ssid is None or ip is None:
+        logging.info("Waiting for WiFi, sleeping...")
+        time.sleep(1)
+        ssid = wifi_ssid()
+        ip = ip_address()
 
+    lcd.clear()
     lcd.message('\x01 ' + ssid + "\n" + ip)
-    logging.info("%s, %s", ssid, ip)
+    logging.info("Found Wifi (SSID: %s, IP: %s)", ssid, ip)
 
     # Turn backlight off after a few seconds
     time.sleep(5)
