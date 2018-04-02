@@ -47,7 +47,7 @@ def main():
     ssid = wifi_ssid()
     ip = ip_address()
     while ssid is None or ip is None:
-        logging.info("Waiting for WiFi, sleeping...")
+        logging.info("Waiting for WiFi, sleeping")
         time.sleep(1)
         ssid = wifi_ssid()
         ip = ip_address()
@@ -58,6 +58,7 @@ def main():
 
     # Turn backlight off after a few seconds
     time.sleep(5)
+    logging.info('Turning off backlight')
     lcd.set_backlight(0)
 
 if __name__ == '__main__':
