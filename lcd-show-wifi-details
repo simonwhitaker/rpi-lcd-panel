@@ -22,7 +22,7 @@ def wifi_ssid():
     wifi_info = subprocess.check_output(["wpa_cli", "status"])
     for line in wifi_info.split("\n"):
         if line.startswith("ssid"):
-            ssid=line.split("=")[1]
+            ssid = line.split("=")[1]
             return ssid
     return None
 
