@@ -54,8 +54,9 @@ def main():
     lcd.message('\x01 ' + ssid + "\n" + ip)
     logging.info("%s, %s", ssid, ip)
 
-    # time.sleep(5)
-    # lcd.set_color(0.0, 0.0, 0.0)
+    # Turn backlight off after a few seconds
+    time.sleep(5)
+    lcd.set_backlight(0)
 
 if __name__ == '__main__':
     main()
